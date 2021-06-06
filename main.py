@@ -48,8 +48,10 @@ if __name__ == '__main__':
     ax2.hist(Y)
     ax2.set_title("Y")
     fig.show()
-    symmetry_test(X)
-    symmetry_test(Y)
+    z, pvalue = symmetry_test(X)
+    z1, pvalue1 = symmetry_test(Y)
+    print(z, pvalue)
+    print(z1, pvalue1)
 
     # test exchangeability
     # n = 20  # samples or trials
@@ -62,7 +64,11 @@ if __name__ == '__main__':
 
     # test whether variances are the same
     # data, X, Y = read_data("data2.txt")
-    # variance_test_one(X, Y)
+    # Q, p_value = variance_test_one(X, Y)
+    # if Q > 1.95 or Q < - 1.95:
+    #     print("Reject H0 (variances of two distributions are the same)")
+    # else:
+    #     print("Cannot reject H0 (variances of two distributions are the same)")
     # variance_test_two(X, Y)
 
 

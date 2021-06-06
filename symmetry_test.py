@@ -1,10 +1,7 @@
-# symmetry_test
+# symmetry_test.py
 from itertools import combinations
 import numpy as np
-
-
-# test symmetry of the sample
-
+from scipy.stats import norm
 
 def symmetry_test(a):
     # Get all combinations of generated data and length 3
@@ -67,10 +64,6 @@ def symmetry_test(a):
 
     sigma = np.sqrt(sigma_squared)
     v = T / sigma
+    p_value = 2. * norm.sf(abs(v)) # two sided test
 
-    # test at 5% confidence level
-    print("Symmetric test")
-    if np.abs(v) > 1.96:
-        print("reject H0 that F is symmetric")
-    else:
-        print("cannot reject H0")
+    return v, p_value

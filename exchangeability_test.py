@@ -1,4 +1,4 @@
-# exchangeability_test
+# exchangeability_test.py
 import numpy as np
 
 
@@ -57,3 +57,5 @@ def exchangeability_test(x, y, size):
         print("reject H0 that x and y are exchangeable")
     else:
         print("cannot reject H0")
+
+    return A_obs

@@ -1,5 +1,6 @@
-# dispersion_test
+# dispersion_test.py
 import numpy as np
+from scipy.stats import norm
 
 
 def variance_test_one(X, Y):
@@ -36,11 +37,9 @@ def variance_test_one(X, Y):
         E_c = n * (N + 2) / 4
         var_c = n * (N - n) * (N + 2) * (N - 2) / (48 * (N - 1))
         Q = (C - E_c) / np.sqrt(var_c)
+        p_value = norm.sf(abs(Q))
 
-    if Q > 1.95 or Q < - 1.95:
-        print("Reject H0 (variances of two distributions are the same)")
-    else:
-        print("Cannot reject H0 (variances of two distributions are the same)")
+    return Q, p_value
 
 
 def variance_test_two(X, Y):
@@ -78,9 +77,6 @@ def variance_test_two(X, Y):
     V2 = 1 / (n * (n - 1)) * sum((B_j - B_bar) ** 2)
 
     Q = (A_bar - B_bar) / np.sqrt(V1 + V2)
-    print(f"Q: {Q}")
+    p_value = 2. * norm.sf(abs(Q)) # two sided test
 
-    if Q > 1.95 or Q < - 1.95:
-        print("Reject H0 (variances of two distributions are the same)")
-    else:
-        print("Cannot reject H0 (variances of two distributions are the same)")
+    return Q, p_value

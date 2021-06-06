@@ -1,8 +1,10 @@
 # median_test.py
 import numpy as np
+from scipy.stats import norm
 
 
 def wilcoxon_test(data):
+    n = len(data)
     abs = []
     for d in data:
         abs.append((d, np.abs(d)))
@@ -22,15 +24,12 @@ def wilcoxon_test(data):
 
     w = min(t_plus, t_minus)
 
-    # test at 5% confidence level
-    # reject if min < critical value
-    # 55 is smaller than critical value 137 for n = 30
-    if w < 137:
-        print("reject H0 that median is 0")
-    else:
-        print("cannot reject H0")
+    E_w = n * (n + 1) / 4
+    se = np.sqrt(n * (n+1) * (2*n+1)/24)
+    z = (w - E_w) / se
+    p_value = 2. * norm.sf(abs(z)) # two sided test
 
-    return w
+    return z, p_value
 
 
 def mann_whitney_u_test(X, Y):
@@ -46,16 +45,12 @@ def mann_whitney_u_test(X, Y):
     var_u = m * n * (m + n + 1) / 12
 
     z = (U - E_u) / np.sqrt(var_u)
+    p_value = 2. * norm.sf(abs(z)) # two sided test
 
-    if z > 1.95 or z < - 1.95:
-        print("Reject H0 (medians of two distributions are the same)")
-    else:
-        print("Cannot reject H0 (medians of two distributions are the same)")
+    return z, p_value
 
 
 def fligner_policello_test(X, Y):
-    m, n = len(X), len(Y)
-
     P_i = []
     for x in X:
         count = 0
@@ -78,9 +73,7 @@ def fligner_policello_test(X, Y):
     Q_bar = np.average(Q_j)
     V1 = sum((P_i - P_bar) ** 2)
     V2 = sum((Q_j - Q_bar) ** 2)
-    U_hat = (sum(Q_j) - sum(P_i)) / (2 * np.sqrt(V1 + V2 + P_bar * Q_bar))
+    z = (sum(Q_j) - sum(P_i)) / (2 * np.sqrt(V1 + V2 + P_bar * Q_bar))
+    p_value = 2. * norm.sf(abs(z)) # two sided test
 
-    if U_hat > 1.95 or U_hat < - 1.95:
-        print("Reject H0 (medians of two distributions are the same)")
-    else:
-        print("Cannot reject H0 (medians of two distributions are the same)")
+    return z, p_value
