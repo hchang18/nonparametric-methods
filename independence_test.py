@@ -4,6 +4,21 @@ from scipy.stats import norm
 
 
 def independence_test(data):
+    """
+    Calculate independence test.
+    This test tests the null hypothesis that two columns in data
+    are independent or orthogonal to each other.
+
+    Parameters
+    ----------
+    data : 2d array of floats
+
+    Returns
+    -------
+    statistic : float
+    p_value : float
+        THe p-value for the two-sided test
+    """
 
     n = len(data)
     sorted_data = sorted(data, key=lambda x: x[1])

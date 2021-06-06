@@ -8,11 +8,30 @@ from kernel_density_estimator import gaussian_pdf, bundle_test_train_set, calcul
 plt.rcParams["figure.figsize"] = (15, 10)
 
 
-# ============================================
-# Kernel Regression Estimator                |
-# ============================================
 def kernel_regression_estimator(data, kernel_func, bandwidth):
-    """ Generate kernel regression estimator over data."""
+    """
+    Calculate a kernel regression estimator using the
+    given kernel function. Kernel regression estimation is a way
+    to estimate the relationship between two variables in
+    a non-parametric way.
+
+    Parameters
+    ----------
+    data : arrays of floats
+
+    kernel_func: function
+        kernel function that applies to
+        the fixed window and put more weight on points
+        closer to the point being evaluated.
+
+    bandwidth: float
+        estimator bandwidth calculated by plugging in
+        or from cross validation method.
+
+    Return
+    -------
+    evaluate : function that evaluates x using given kernel
+    """
     X = data[:, 1]
     Y = data[:, 0]
     kernels = dict()
@@ -38,6 +57,7 @@ def kernel_regression_estimator(data, kernel_func, bandwidth):
 
 
 def estimate_bandwidth(data, kernel_function):
+    """Compute the estimator bandwidth with cross validation"""
     bandwidths = np.arange(0.01, 2, 0.02)
 
     # estimate y_hat corresponding to X
@@ -57,24 +77,19 @@ def estimate_bandwidth(data, kernel_function):
     return h_opt
 
 
-# =========================================
-# kernel density estimates visualizations |
-# =========================================
 def plot_kre(data, kernel_function):
-    x_values = data[:, 1]  # x
+    """
+    Visualize kernel regression estimates using both bandwidth
+    obtained from plugin method and cross validation
+    """
+    x_values = data[:, 1]
     x = np.arange(min(x_values), max(x_values), .01)
 
     h_opt = calculate_optimum_bandwidth(x_values, kernel_function)
-
-    # ========================================================
-    # Bandwidth Selection : cross-validation                 |
-    # ========================================================
     h_cv = estimate_bandwidth(data, gaussian_pdf)
 
-    # ========================================================
-    # Optimized Bandwidth visualization                      |
-    # ========================================================
     fig = plt.figure()
+
     # plugin optimal bandwidth
     ax = fig.add_subplot(2, 2, 1)
     dist_h_opt = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_opt)
@@ -104,10 +119,11 @@ def plot_kre(data, kernel_function):
     plt.show()
 
 
-# ===================================================
-# Generate data                                     |
-# ===================================================
 def generate_data_for_midterm(n):
+    """
+    Returns generated data that follows certain
+    functions given below.
+    """
     x = list()
     y = list()
 
@@ -132,7 +148,11 @@ def generate_data_for_midterm(n):
 
 
 def create_confidence_interval(num_simulation):
-    # repeat the estimation 1000 times
+    """
+    Repeat num_simulation number of experiments
+    with kernel_regression_estimator above.
+    Return a list of function estimates.
+    """
     f_hat_list = []
 
     for i in range(num_simulation):

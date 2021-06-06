@@ -4,6 +4,26 @@ from scipy.stats import norm
 
 
 def variance_test_one(X, Y):
+    """
+    Calculate the variance test.
+    This test tests the null hypothesis that two distributions on X and Y have
+    same variance. This test assumes that the two distributions have same median.
+
+    Parameters
+    ----------
+    X : array of floats
+    Y : array of floats
+
+    Returns
+    -------
+    statistic : float
+        Sum of ranks of Y's from the following definition
+        --+--+--+--+--+--+--+ ... --+--+--+--+--+--
+        1  2  3  4 ..... N/2    N/2 . . . .3  2  1
+        Y1       Y2                  Y5 ...
+    p_value : float
+        THe p-value for the two-sided test
+    """
     m = len(X)
     n = len(Y)
     Y_set = set(Y)
@@ -39,10 +59,29 @@ def variance_test_one(X, Y):
         Q = (C - E_c) / np.sqrt(var_c)
         p_value = norm.sf(abs(Q))
 
-    return Q, p_value
+    return C, p_value
 
 
 def variance_test_two(X, Y):
+    """
+    Calculate the variance test.
+    This test tests the null hypothesis that two distributions on X and Y have
+    same variance. This time, the assumptions on medians are relaxed, but it
+    requires the existence of the 4th moment.
+
+    Parameters
+    ----------
+    X : array of floats
+    Y : array of floats
+
+    Returns
+    -------
+    statistic : float
+        The difference between the variances of X except for xi and variances
+        of Y except for yi
+    p_value : float
+        THe p-value for the two-sided test
+    """
     m = len(X)
     n = len(Y)
 

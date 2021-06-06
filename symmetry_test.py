@@ -5,6 +5,21 @@ from scipy.stats import norm
 
 
 def symmetry_test(a):
+    """
+    Calculate symmetry test
+    It tests whether the given probability density distribution is
+    symmetric around the median.
+
+    Parameters
+    ----------
+    a : array of floats
+
+    Returns
+    -------
+    statistic : float
+    p_value : float
+        THe p-value for the two-sided test
+    """
     # Get all combinations of generated data and length 3
     comb = combinations(a, 3)
 

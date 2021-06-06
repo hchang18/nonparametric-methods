@@ -3,6 +3,25 @@ import numpy as np
 
 
 def exchangeability_test(x, y, size):
+    """
+    Calculate the variance test.
+    This test tests the null hypothesis that two distributions on X and Y have
+    same variance. This time, the assumptions on medians are relaxed, but it
+    requires the existence of the 4th moment.
+
+    Parameters
+    ----------
+    X : array of floats
+    Y : array of floats
+
+    Returns
+    -------
+    statistic : float
+        The difference between the variances of X except for xi and variances
+        of Y except for yi
+    p_value : float
+        THe p-value for the two-sided test
+    """
     ab = []
     for i in range(size):
         ab.append((x[i], y[i], min(x[i], y[i]), max(x[i], y[i])))  # x, y, a, b

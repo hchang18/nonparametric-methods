@@ -5,19 +5,33 @@ import numpy as np
 from scipy.stats import norm, expon
 from random import randrange
 
-
-from sklearn.neighbors import KernelDensity
-from sklearn.model_selection import GridSearchCV
-
 plt.rcParams["figure.figsize"] = (15, 10)
 
 
-# ===================================================
-# kde_pdf and kde_cdf are used for compiling kernel |
-# density and distribution estimates.               |
-# ===================================================
 def kde_pdf(data, kernel_func, bandwidth):
-    """Generate kernel density estimator over data."""
+    """
+    Calculate a kernel density estimate using the
+    given kernel function. Kernel density estimation is a way
+    to estimate the probability density function of a random
+    variable in a non-parametric way.
+
+    Parameters
+    ----------
+    data : arrays of floats
+
+    kernel_func: function
+        kernel function that applies to
+        the fixed window and put more weight on points
+        closer to the point being evaluated.
+
+    bandwidth: float
+        estimator bandwidth calculated by plugging in
+        or from cross validation method.
+
+    Return
+    -------
+    evaluate : function that evaluates x using given kernel
+    """
     kernels = dict()
     n = len(data)
     for d in data:
@@ -33,9 +47,6 @@ def kde_pdf(data, kernel_func, bandwidth):
     return evaluate
 
 
-# ============================================
-# Uniform Kernel PDF                         |
-# ============================================
 def uniform_pdf(x_i, bandwidth):
     """Return uniform kernel density estimator."""
     lowerb = (x_i - bandwidth)
@@ -54,9 +65,6 @@ def uniform_pdf(x_i, bandwidth):
     return evaluate
 
 
-# ============================================
-# Epanechnikov Kernel PDF                      |
-# ============================================
 def epanechnikov_pdf(x_i, bandwidth):
     """Return epanechnikov kernel density estimator."""
     lowerb = (x_i - bandwidth)
@@ -75,9 +83,6 @@ def epanechnikov_pdf(x_i, bandwidth):
     return evaluate
 
 
-# ============================================
-# Gaussian Kernel PDF                        |
-# ============================================
 def gaussian_pdf(x_i, bandwidth):
     """Return Gaussian kernel density estimator."""
     x_bar = x_i
@@ -91,6 +96,7 @@ def gaussian_pdf(x_i, bandwidth):
 
 
 def cross_validation_split(dataset, folds=10):
+    """Return dataset split into 10 folds"""
     dataset_split = list()
     dataset_copy = list(dataset)
     fold_size = int(len(dataset) / folds)
@@ -104,6 +110,7 @@ def cross_validation_split(dataset, folds=10):
 
 
 def bundle_test_train_set(dataset, k, test_idx):
+    """Return dataset split into train and test sets"""
     folds = cross_validation_split(dataset, folds=k)
     test = np.array(folds[test_idx])
 
@@ -116,9 +123,7 @@ def bundle_test_train_set(dataset, k, test_idx):
 
 
 def estimate_bandwidth(data, kernel_function, true_dist):
-    # ========================================================
-    # Bandwidth Selection : cross validation method          |
-    # ========================================================
+    """Compute the estimator bandwidth with cross validation"""
     bandwidths = np.arange(0.01, 2, 0.02)
     if true_dist == 'exp':
         pdf = expon.pdf(data)
@@ -143,26 +148,24 @@ def estimate_bandwidth(data, kernel_function, true_dist):
     return h_opt
 
 
-def calculate_optimum_bandwidth(vals, kernel_function):
-    # ========================================================
-    # Bandwidth Selection : rule-of-thumb plugin             |
-    # ========================================================
-    num_samples = len(vals)
+def calculate_optimum_bandwidth(values, kernel_function):
+    """Compute the estimator bandwidth with plugin method"""
+    num_samples = len(values)
     h_opt = 0
     if "uniform_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
+        sigma_hat = np.std(values)
         R_k = 1 / 2
         kappa_2 = 1 / 3
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
 
     elif "epanechnikov_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
+        sigma_hat = np.std(values)
         R_k = 3 / 5
         kappa_2 = 1 / 5
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
 
     elif "gaussian_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
+        sigma_hat = np.std(values)
         R_k = 1 / (2 * (np.pi ** 0.5))
         kappa_2 = 1
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
@@ -170,10 +173,11 @@ def calculate_optimum_bandwidth(vals, kernel_function):
     return h_opt
 
 
-# =========================================
-# kernel density estimates visualizations |
-# =========================================
 def plot_kde(true_dist, num_samples, kernel_function):
+    """
+    Visualize kernel density estimates using both bandwidth
+    obtained from plugin method and cross validation
+    """
     x_values = np.array([])
     if true_dist == 'exp':
         x_values = np.random.exponential(1, num_samples)
@@ -183,16 +187,10 @@ def plot_kde(true_dist, num_samples, kernel_function):
     x = np.arange(min(x_values), max(x_values), .01)
 
     h_opt = calculate_optimum_bandwidth(x_values, kernel_function)
-
-    # ========================================================
-    # Bandwidth Selection : cross-validation                 |
-    # ========================================================
     h_cv = estimate_bandwidth(x, gaussian_pdf, true_dist)
 
-    # ========================================================
-    # Optimized Bandwidth visualization                      |
-    # ========================================================
     fig = plt.figure()
+
     # plugin optimal bandwidth
     ax = fig.add_subplot(2, 2, 1)
     dist_h_opt = kde_pdf(x_values, kernel_func=kernel_function, bandwidth=h_opt)

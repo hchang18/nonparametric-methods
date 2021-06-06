@@ -4,6 +4,24 @@ from scipy.stats import norm
 
 
 def wilcoxon_test(data):
+    """
+    Calculate the Wilcoxon signed-rank test
+
+    The Wilcoxon signed-rank tests the null hypothesis that
+    two related paired samples come from the same distribution.
+    It tests whether the distribution of the difference x - y
+    is symmetric about zero.
+
+    Parameters
+    ----------
+    data : 2d array of floats
+
+    Returns
+    -------
+    statistic : float
+    p_value : float
+        THe p-value for the two-sided test
+    """
     n = len(data)
     print(n)
     absolute_values = []
@@ -34,6 +52,21 @@ def wilcoxon_test(data):
 
 
 def mann_whitney_u_test(X, Y):
+    """
+    Calculate the Mann-Whitney rank test on samples X and Y.
+    It tests whether they have the same median.
+
+    Parameters
+    ----------
+    X : array of floats
+    Y : array of floats
+
+    Returns
+    -------
+    statistic : float
+    p_value : float
+        THe p-value for the two-sided test
+    """
     m, n = len(X), len(Y)
 
     U = 0
@@ -52,6 +85,24 @@ def mann_whitney_u_test(X, Y):
 
 
 def fligner_policello_test(X, Y):
+    """
+    Calculate the Fligner-Policello test on samples X and Y.
+    It tests whether they have the same median, but without
+    assumption on shape or scale of the distributions. However,
+    it assumes that X and Y are from two different symmetric
+    distributions.
+
+    Parameters
+    ----------
+    X : array of floats
+    Y : array of floats
+
+    Returns
+    -------
+    statistic : float
+    p_value : float
+        THe p-value for the two-sided test
+    """
     P_i = []
     for x in X:
         count = 0
