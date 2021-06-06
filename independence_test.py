@@ -25,13 +25,14 @@ def independence_test(data):
     z = 3 * tau * np.sqrt(n * (n - 1)) / np.sqrt(2 * (2 * n + 5))
     p_value = 2. * norm.sf(abs(z)) # two sided test
 
-    return z, p_value
+    return z, p_value, tau
 
 
-def required_sample_size():
+def calculate_required_sample_size(data):
     # optimal sample size
     z_alpha = 1.96
     z_beta = 1.96
+    _, _, tau = independence_test(data)
     min_n = 4 * (z_alpha + z_beta) ** 2 / (9 * tau ** 2)
     return int(min_n + 1)
 
