@@ -174,59 +174,59 @@ def calculate_optimum_bandwidth(vals, kernel_function):
 # kernel density estimates visualizations |
 # =========================================
 def plot_kde(true_dist, num_samples, kernel_function):
-    vals = np.array([])
+    x_values = np.array([])
     if true_dist == 'exp':
-        vals = np.random.exponential(1, num_samples)
+        x_values = np.random.exponential(1, num_samples)
     elif true_dist == 'norm':
-        vals = np.random.normal(0, 1, num_samples)
+        x_values = np.random.normal(0, 1, num_samples)
 
-    xvals = np.arange(min(vals), max(vals), .01)
+    x = np.arange(min(x_values), max(x_values), .01)
 
-    h_opt = calculate_optimum_bandwidth(vals, kernel_function)
+    h_opt = calculate_optimum_bandwidth(x_values, kernel_function)
 
     # ========================================================
     # Bandwidth Selection : cross-validation                 |
     # ========================================================
-    h_cv = estimate_bandwidth(xvals, gaussian_pdf, true_dist)
+    h_cv = estimate_bandwidth(x, gaussian_pdf, true_dist)
 
     # ========================================================
     # Optimized Bandwidth visualization                      |
     # ========================================================
     fig = plt.figure()
     # plugin optimal bandwidth
-    ax4 = fig.add_subplot(2, 2, 1)
-    dist_4 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=h_opt)
-    y4 = [dist_4(i) for i in xvals]
-    ys4 = [dist_4(i) for i in vals]
-    ax4.scatter(vals, ys4)
+    ax = fig.add_subplot(2, 2, 1)
+    dist_h_opt = kde_pdf(x_values, kernel_func=kernel_function, bandwidth=h_opt)
+    y = [dist_h_opt(i) for i in x]
+    ys = [dist_h_opt(i) for i in x_values]
+    ax.scatter(x_values, ys)
     if true_dist == 'exp':
-        ax4.plot(xvals, expon.pdf(xvals))
+        ax.plot(x, expon.pdf(x))
     elif true_dist == 'norm':
-        ax4.plot(xvals, norm.pdf(xvals, 0, 1))
-    ax4.plot(xvals, y4)
+        ax.plot(x, norm.pdf(x, 0, 1))
+    ax.plot(x, y)
 
     # bandwidth chosen from cross validation
-    ax5 = fig.add_subplot(2, 2, 2)
-    dist_5 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=h_cv)
-    y5 = [dist_5(i) for i in xvals]
-    ys5 = [dist_5(i) for i in vals]
-    ax5.scatter(vals, ys5)
+    ax1 = fig.add_subplot(2, 2, 2)
+    dist_h_cv = kde_pdf(x_values, kernel_func=kernel_function, bandwidth=h_cv)
+    y1 = [dist_h_cv(i) for i in x]
+    ys1 = [dist_h_cv(i) for i in x_values]
+    ax1.scatter(x_values, ys1)
     if true_dist == 'exp':
-        ax5.plot(xvals, expon.pdf(xvals))
+        ax1.plot(x, expon.pdf(x))
     elif true_dist == 'norm':
-        ax5.plot(xvals, norm.pdf(xvals, 0, 1))
-    ax5.plot(xvals, y5)
+        ax1.plot(x, norm.pdf(x, 0, 1))
+    ax1.plot(x, y1)
 
     # display gridlines
-    ax4.grid(True)
-    ax5.grid(True)
+    ax.grid(True)
+    ax1.grid(True)
 
     # display legend in each subplot
     leg4 = mpatches.Patch(color=None, label=f'plug-in bandwidth={h_opt}')
     leg5 = mpatches.Patch(color=None, label=f'cross-validated bandwidth={h_cv}')
 
-    ax4.legend(handles=[leg4])
-    ax5.legend(handles=[leg5])
+    ax.legend(handles=[leg4])
+    ax1.legend(handles=[leg5])
 
     plt.tight_layout()
     plt.show()

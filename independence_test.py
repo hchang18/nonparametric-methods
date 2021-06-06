@@ -6,7 +6,7 @@ from scipy.stats import norm
 def independence_test(data):
 
     n = len(data)
-    sorted_data = np.array(sorted(data, key=lambda x: x[1]))
+    sorted_data = sorted(data, key=lambda x: x[1])
     X = sorted_data[:, 1]
     Y = sorted_data[:, 0]
 
@@ -22,9 +22,6 @@ def independence_test(data):
 
     tau = (concordant - discordant) / (concordant + discordant)
 
-    # source of z calculation: https://www.statology.org/kendalls-tau/
-    # statistical significance of Kendall's tau
-    # since n = 200, tau generally follows normal distribution
     z = 3 * tau * np.sqrt(n * (n - 1)) / np.sqrt(2 * (2 * n + 5))
     p_value = 2. * norm.sf(abs(z)) # two sided test
 

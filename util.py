@@ -18,11 +18,11 @@ def read_data(filename):
     return data, x, y
 
 
-def plot_2d(x, y):
+def plot_2darray(x, y):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.scatter(x, y)
-    g = ax.grid(True)
+    ax.grid(True)
     leg = mpatches.Patch(color=None, label='original data plots')
     ax.legend(handles=[leg])
     plt.tight_layout()

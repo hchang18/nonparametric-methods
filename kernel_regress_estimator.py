@@ -61,10 +61,10 @@ def estimate_bandwidth(data, kernel_function):
 # kernel density estimates visualizations |
 # =========================================
 def plot_kre(data, kernel_function):
-    vals = data[:, 1]  # x
-    xvals = np.arange(min(vals), max(vals), .01)
+    x_values = data[:, 1]  # x
+    x = np.arange(min(x_values), max(x_values), .01)
 
-    h_opt = calculate_optimum_bandwidth(vals, kernel_function)
+    h_opt = calculate_optimum_bandwidth(x_values, kernel_function)
 
     # ========================================================
     # Bandwidth Selection : cross-validation                 |
@@ -76,29 +76,29 @@ def plot_kre(data, kernel_function):
     # ========================================================
     fig = plt.figure()
     # plugin optimal bandwidth
-    ax4 = fig.add_subplot(2, 2, 1)
-    dist_4 = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_opt)
-    y4 = [dist_4(i) for i in xvals]
-    ax4.scatter(data[:, 1], data[:, 0])
-    ax4.plot(xvals, y4)
+    ax = fig.add_subplot(2, 2, 1)
+    dist_h_opt = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_opt)
+    y_h_opt = [dist_h_opt(i) for i in x]
+    ax.scatter(data[:, 1], data[:, 0])
+    ax.plot(x, y_h_opt)
 
     # bandwidth chosen from cross validation
-    ax5 = fig.add_subplot(2, 2, 2)
-    dist_5 = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_cv)
-    y5 = [dist_5(i) for i in xvals]
-    ax5.scatter(data[:, 1], data[:, 0])
-    ax5.plot(xvals, y5)
+    ax1 = fig.add_subplot(2, 2, 2)
+    dist_h_cv = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_cv)
+    y_h_cv = [dist_h_cv(i) for i in x]
+    ax1.scatter(data[:, 1], data[:, 0])
+    ax1.plot(x, y_h_cv)
 
     # display gridlines
-    ax4.grid(True)
-    ax5.grid(True)
+    ax.grid(True)
+    ax1.grid(True)
 
     # display legend in each subplot
     leg4 = mpatches.Patch(color=None, label=f'plug-in bandwidth={h_opt}')
     leg5 = mpatches.Patch(color=None, label=f'cross-validated bandwidth={h_cv}')
 
-    ax4.legend(handles=[leg4])
-    ax5.legend(handles=[leg5])
+    ax.legend(handles=[leg4])
+    ax1.legend(handles=[leg5])
 
     plt.tight_layout()
     plt.show()

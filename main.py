@@ -14,15 +14,17 @@ if __name__ == '__main__':
 
     # kernel regression estimation
     # data, x, y = read_data("data1.txt")
-    # plot_2d(x, y)
+    # plot_2darray(x, y)
     # plot_kre(data, gaussian_pdf)
 
     # nonparametric testing
 
     # wilcoxon_test
-    # n = 30
-    # data = [np.random.normal(0.5, 1) for i in range(n)]
-    # wilcoxon_test(data)
+    n = 30
+    data = []
+    for i in range(n):
+        data.append(np.random.normal(0.5, 1))
+    w, p_value = wilcoxon_test(data)
 
     # mann_whitney_u_test
     # Generate X from N(0.2, 1) and Y from N(0.5, 1)
@@ -41,17 +43,17 @@ if __name__ == '__main__':
     # fligner_policello_test(X, Y)
 
     # test symmetry
-    data, X, Y = read_data("data2.txt")
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    ax1.hist(X)
-    ax1.set_title("X")
-    ax2.hist(Y)
-    ax2.set_title("Y")
-    fig.show()
-    z, pvalue = symmetry_test(X)
-    z1, pvalue1 = symmetry_test(Y)
-    print(z, pvalue)
-    print(z1, pvalue1)
+    # data, X, Y = read_data("data2.txt")
+    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # ax1.hist(X)
+    # ax1.set_title("X")
+    # ax2.hist(Y)
+    # ax2.set_title("Y")
+    # fig.show()
+    # z, pvalue = symmetry_test(X)
+    # z1, pvalue1 = symmetry_test(Y)
+    # print(z, pvalue)
+    # print(z1, pvalue1)
 
     # test exchangeability
     # n = 20  # samples or trials

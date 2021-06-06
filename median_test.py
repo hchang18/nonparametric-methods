@@ -5,13 +5,14 @@ from scipy.stats import norm
 
 def wilcoxon_test(data):
     n = len(data)
-    abs = []
+    print(n)
+    absolute_values = []
     for d in data:
-        abs.append((d, np.abs(d)))
+        absolute_values.append((d, np.abs(d)))
 
-    a = sorted(abs, key=lambda x: x[1])
+    absolute_values.sort(key=lambda x: x[1])
     ret = []
-    for i, d in enumerate(a):
+    for i, d in enumerate(absolute_values):
         ret.append((i + 1, d[0], d[1]))
 
     t_plus = 0
