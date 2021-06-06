@@ -3,51 +3,38 @@ import numpy as np
 
 
 def variance_test_one(X, Y):
-    # Pool in one
     m = len(X)
     n = len(Y)
-    X_set = set(X)
     Y_set = set(Y)
     S = np.union1d(X, Y)
     N = m + n
 
     # N is odd
     if N % 2 == 1:
-        print("N odd")
         # create the grid
         grid = [i + 1 for i in range(int(N / 2))]
         reversed_grid = grid[::-1]
         middle = [int((N + 1) / 2)]
         R = grid + middle + reversed_grid
         S.sort()
-
-        # calculate C
         C = 0
         for k in range(N):
             if S[k] in Y_set:
                 C += R[k]
-
         E_c = (n * (N + 1) ** 2) / (4 * N)
         var_c = n * (N - n) * (N + 1) * (N ** 2 + 3) / (48 * N ** 2)
-
         Q = (C - E_c) / np.sqrt(var_c)
     else:
-        print("N even")
-
         grid = [i + 1 for i in range(int(N / 2))]
         reversed_grid = grid[::-1]
         R = grid + reversed_grid
         S.sort()
-
-        # calculate C
         C = 0
         for i in range(N):
             if S[i] in Y_set:
                 C += R[i]
-
         E_c = n * (N + 2) / 4
         var_c = n * (N - n) * (N + 2) * (N - 2) / (48 * (N - 1))
-
         Q = (C - E_c) / np.sqrt(var_c)
 
     if Q > 1.95 or Q < - 1.95:

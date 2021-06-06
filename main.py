@@ -41,15 +41,15 @@ if __name__ == '__main__':
     # fligner_policello_test(X, Y)
 
     # test symmetry
-    # data, X, Y = read_data("data2.txt")
-    # fig, (ax1, ax2) = plt.subplots(1, 2)
-    # ax1.hist(X)
-    # ax1.set_title("X")
-    # ax2.hist(Y)
-    # ax2.set_title("Y")
-    # fig.show()
-    # symmetry_test(X)
-    # symmetry_test(Y)
+    data, X, Y = read_data("data2.txt")
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    ax1.hist(X)
+    ax1.set_title("X")
+    ax2.hist(Y)
+    ax2.set_title("Y")
+    fig.show()
+    symmetry_test(X)
+    symmetry_test(Y)
 
     # test exchangeability
     # n = 20  # samples or trials
@@ -67,6 +67,6 @@ if __name__ == '__main__':
 
 
     # test independence
-    data, X, Y = read_data("data2.txt")
-    independence_test(data)
+    # data, X, Y = read_data("data2.txt")
+    # independence_test(data)
 

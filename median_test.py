@@ -7,16 +7,7 @@ def wilcoxon_test(data):
     for d in data:
         abs.append((d, np.abs(d)))
 
-    # Function to sort hte list by second item of tuple
-    def sort_tuple(tup):
-
-        # reverse = None (Sorts in Ascending order)
-        # key is set to sort using second element of
-        # sublist lambda has been used
-        tup.sort(key=lambda x: x[1])
-        return tup
-
-    a = sort_tuple(abs)
+    a = sorted(abs, key=lambda x: x[1])
     ret = []
     for i, d in enumerate(a):
         ret.append((i + 1, d[0], d[1]))
@@ -44,10 +35,6 @@ def wilcoxon_test(data):
 
 def mann_whitney_u_test(X, Y):
     m, n = len(X), len(Y)
-    X_set = set(X)
-    Y_set = set(Y)
-    S = np.union1d(X, Y)
-    N = m + n
 
     U = 0
     for x in X:
@@ -68,10 +55,6 @@ def mann_whitney_u_test(X, Y):
 
 def fligner_policello_test(X, Y):
     m, n = len(X), len(Y)
-    X_set = set(X)
-    Y_set = set(Y)
-    S = np.union1d(X, Y)
-    N = m + n
 
     P_i = []
     for x in X:

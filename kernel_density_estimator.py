@@ -80,9 +80,6 @@ def epanechnikov_pdf(x_i, bandwidth):
 # ============================================
 # Gaussian Kernel PDF                        |
 # ============================================
-import numpy as np
-
-
 def gaussian_pdf(x_i, bandwidth):
     """Return Gaussian kernel density estimator."""
     x_bar = x_i
@@ -111,8 +108,6 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
     # ========================================================
     # Bandwidth Selection : rule-of-thumb plugin             |
     # ========================================================
-    # bandwidth estimation based on kernel function
-
     if "uniform_pdf" in str(kernel_function):
         sigma_hat = np.std(vals)
         R_k = 1 / 2
@@ -131,7 +126,7 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
         kappa_2 = 1
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
 
-        # ========================================================
+    # ========================================================
     # Bandwidth Selection : cross-validation                 |
     # ========================================================
     grid = GridSearchCV(KernelDensity(), {'bandwidth': xvals}, cv=20)
@@ -139,71 +134,9 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
     h_cv = grid.best_params_["bandwidth"]
 
     # ========================================================
-    # Random Bandwidth visualization                         |
-    # ========================================================
-
-    # fig = plt.figure()
-
-    # # bandwidth=1:
-    # ax1 = fig.add_subplot(2, 2, 1)
-    # dist_1 = kde_pdf(data=vals, kernel_func=kernel_function, bandwidth=bandwidth_h[0])
-    # y1 = [dist_1(i) for i in xvals]
-    # ys1 = [dist_1(i) for i in vals]
-    # ax1.scatter(vals, ys1)
-    # if true_dist == 'exp':
-    #     ax1.plot(xvals, expon.pdf(xvals))
-    # elif true_dist == 'norm':
-    #     ax1.plot(xvals, norm.pdf(xvals, 0, 1))
-    # ax1.plot(xvals, y1)
-
-    # # bandwidth=2:
-    # ax2 = fig.add_subplot(2, 2, 2)
-    # dist_2 = kde_pdf(data=vals, kernel_func=kernel_function, bandwidth=bandwidth_h[1])
-    # y2 = [dist_2(i) for i in xvals]
-    # ys2 = [dist_2(i) for i in vals]
-    # ax2.scatter(vals, ys2)
-    # if true_dist == 'exp':
-    #     ax2.plot(xvals, expon.pdf(xvals))
-    # elif true_dist == 'norm':
-    #     ax2.plot(xvals, norm.pdf(xvals, 0, 1))
-    # ax2.plot(xvals, y2)
-
-    # # bandwidth=3:
-    # ax3 = fig.add_subplot(2, 2, 3)
-    # dist_3 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=bandwidth_h[2])
-    # y3 = [dist_3(i) for i in xvals]
-    # ys3 = [dist_3(i) for i in vals]
-    # ax3.scatter(vals, ys3)
-    # if true_dist == 'exp':
-    #     ax3.plot(xvals, expon.pdf(xvals))
-    # elif true_dist == 'norm':
-    #     ax3.plot(xvals, norm.pdf(xvals, 0, 1))
-    # ax3.plot(xvals, y3)
-
-    # # display gridlines
-    # g1 = ax1.grid(True)
-    # g2 = ax2.grid(True)
-    # g3 = ax3.grid(True)
-
-    # # display legend in each subplot
-    # leg1 = mpatches.Patch(color=None, label=f'bandwidth={bandwidth_h[0]}')
-    # leg2 = mpatches.Patch(color=None, label=f'bandwidth={bandwidth_h[1]}')
-    # leg3 = mpatches.Patch(color=None, label=f'bandwidth={bandwidth_h[2]}')
-
-    # ax1.legend(handles=[leg1])
-    # ax2.legend(handles=[leg2])
-    # ax3.legend(handles=[leg3])
-
-    # plt.tight_layout()
-    # plt.show()
-
-    # ========================================================
     # Optimized Bandwidth visualization                      |
     # ========================================================
-
     fig = plt.figure()
-
-    # bandwidth=optimal_bandwidth_plugin:
     ax4 = fig.add_subplot(2, 2, 1)
     dist_4 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=h_opt)
     y4 = [dist_4(i) for i in xvals]

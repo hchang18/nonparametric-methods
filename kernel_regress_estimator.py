@@ -1,13 +1,9 @@
 # kernel_regress_estimator.py
-import matplotlib
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-from scipy.stats import norm, expon
 from random import seed, randrange, uniform
-
-from sklearn.neighbors import KernelDensity
-from sklearn.model_selection import GridSearchCV
 
 plt.rcParams["figure.figsize"] = (15, 10)
 
@@ -82,10 +78,6 @@ def bundle_test_train_set(dataset, k, test_idx):
 
 
 def estimate_bandwidth(data, kernel_function):
-    num_samples = len(data[:, 0])
-    y = data[:, 0]
-    x = data[:, 1]
-    # list of bandwidth
     bandwidths = np.arange(0.01, 2, 0.02)
 
     # estimate y_hat corresponding to X
@@ -139,7 +131,7 @@ def plot_kre(data, kernel_function):
         kappa_2 = 1
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
 
-        # ========================================================
+    # ========================================================
     # Bandwidth Selection : cross-validation                 |
     # ========================================================
     h_cv = estimate_bandwidth(data, gaussian_pdf)
@@ -164,8 +156,8 @@ def plot_kre(data, kernel_function):
     ax5.plot(xvals, y5)
 
     # display gridlines
-    g4 = ax4.grid(True)
-    g5 = ax5.grid(True)
+    ax4.grid(True)
+    ax5.grid(True)
 
     # display legend in each subplot
     leg4 = mpatches.Patch(color=None, label=f'plug-in bandwidth={h_opt}')

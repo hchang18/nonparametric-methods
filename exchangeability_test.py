@@ -6,8 +6,6 @@ def exchangeability_test(x, y, size):
     ab = []
     for i in range(size):
         ab.append((x[i], y[i], min(x[i], y[i]), max(x[i], y[i])))  # x, y, a, b
-
-    # sort it by a
     ab.sort(key=lambda x: x[2])
 
     r = []
@@ -26,14 +24,9 @@ def exchangeability_test(x, y, size):
                 d_j.append(1)
             else:
                 d_j.append(0)
-        # print("r: ", r)
-        # print("d_j: ", d_j)
         t = [x * y for x, y in zip(r, d_j)]
-        # print("t: ", t)
         T_j.append(sum(t))
         d.append(d_j)
-
-    # print(np.array(d).shape)
     A_obs = sum([t ** 2 for t in T_j]) / (size ** 2)
     print(A_obs)
 
