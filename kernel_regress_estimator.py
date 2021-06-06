@@ -38,7 +38,7 @@ def kernel_regression_estimator(data, kernel_func, bandwidth):
             result.append(weight[i] * Y[i])
         return sum(result)
 
-    return (evaluate)
+    return evaluate
 
 
 # ============================================
@@ -51,9 +51,9 @@ def gaussian_pdf(x_i, bandwidth):
     def evaluate(x):
         """Evaluate x."""
         pdf = (np.sqrt(2 * np.pi * bandwidth ** 2) ** -1) * np.exp(-((x - x_bar) ** 2) / (2 * bandwidth ** 2))
-        return (pdf)
+        return pdf
 
-    return (evaluate)
+    return evaluate
 
 
 def cross_validation_split(dataset, folds=10):

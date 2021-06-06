@@ -28,9 +28,9 @@ def kde_pdf(data, kernel_func, bandwidth):
         pdfs = list()
         for d in data:
             pdfs.append(kernels[d](x))
-        return (sum(pdfs) / n)
+        return sum(pdfs) / n
 
-    return (evaluate)
+    return evaluate
 
 
 # ============================================
@@ -50,9 +50,9 @@ def uniform_pdf(x_i, bandwidth):
             pdf = 0
         else:
             pdf = (1 / (2 * bandwidth))
-        return (pdf)
+        return pdf
 
-    return (evaluate)
+    return evaluate
 
 
 # ============================================
@@ -72,9 +72,9 @@ def epanechnikov_pdf(x_i, bandwidth):
             pdf = 0
         else:
             pdf = ((3 * (bandwidth ** 2 - (x - x_i) ** 2)) / (4 * bandwidth ** 3))
-        return (pdf)
+        return pdf
 
-    return (evaluate)
+    return evaluate
 
 
 # ============================================
@@ -90,9 +90,9 @@ def gaussian_pdf(x_i, bandwidth):
     def evaluate(x):
         """Evaluate x."""
         pdf = (np.sqrt(2 * np.pi * bandwidth ** 2) ** -1) * np.exp(-((x - x_bar) ** 2) / (2 * bandwidth ** 2))
-        return (pdf)
+        return pdf
 
-    return (evaluate)
+    return evaluate
 
 
 # =========================================
