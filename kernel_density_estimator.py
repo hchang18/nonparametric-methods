@@ -15,7 +15,6 @@ plt.rcParams["figure.figsize"] = (15, 10)
 # kde_pdf and kde_cdf are used for compiling kernel |
 # density and distribution estimates.               |
 # ===================================================
-
 def kde_pdf(data, kernel_func, bandwidth):
     """Generate kernel density estimator over data."""
     kernels = dict()
@@ -36,7 +35,6 @@ def kde_pdf(data, kernel_func, bandwidth):
 # ============================================
 # Uniform Kernel PDF                         |
 # ============================================
-
 def uniform_pdf(x_i, bandwidth):
     """Return uniform kernel density estimator."""
     lowerb = (x_i - bandwidth)
@@ -58,7 +56,6 @@ def uniform_pdf(x_i, bandwidth):
 # ============================================
 # Epanechnikov Kernel PDF                      |
 # ============================================
-
 def epanechnikov_pdf(x_i, bandwidth):
     """Return epanechnikov kernel density estimator."""
     lowerb = (x_i - bandwidth)

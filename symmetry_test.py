@@ -3,6 +3,7 @@ from itertools import combinations
 import numpy as np
 from scipy.stats import norm
 
+
 def symmetry_test(a):
     # Get all combinations of generated data and length 3
     comb = combinations(a, 3)
