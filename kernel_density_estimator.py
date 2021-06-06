@@ -1,9 +1,10 @@
 # kernel_density_estimator.py
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 from scipy.stats import norm, expon
+from random import randrange
+
 
 from sklearn.neighbors import KernelDensity
 from sklearn.model_selection import GridSearchCV
@@ -89,22 +90,65 @@ def gaussian_pdf(x_i, bandwidth):
     return evaluate
 
 
-# =========================================
-# kernel density estimates visualizations |
-# =========================================
-def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
-    vals = np.array([])
+def cross_validation_split(dataset, folds=10):
+    dataset_split = list()
+    dataset_copy = list(dataset)
+    fold_size = int(len(dataset) / folds)
+    for i in range(folds):
+        fold = list()
+        while len(fold) < fold_size:
+            index = randrange(len(dataset_copy))
+            fold.append(dataset_copy.pop(index))
+        dataset_split.append(fold)
+    return dataset_split
 
+
+def bundle_test_train_set(dataset, k, test_idx):
+    folds = cross_validation_split(dataset, folds=k)
+    test = np.array(folds[test_idx])
+
+    train = list()
+    for i, x in enumerate(folds):
+        if i != test_idx:
+            train.extend(folds[i])
+    train = np.array(train)
+    return test, train
+
+
+def estimate_bandwidth(data, kernel_function, true_dist):
+    # ========================================================
+    # Bandwidth Selection : cross validation method          |
+    # ========================================================
+    bandwidths = np.arange(0.01, 2, 0.02)
     if true_dist == 'exp':
-        vals = np.random.exponential(1, num_samples)
+        pdf = expon.pdf(data)
     elif true_dist == 'norm':
-        vals = np.random.normal(0, 1, num_samples)
+        pdf = norm.pdf(data)
 
-    xvals = np.arange(min(vals), max(vals), .01)
+    data = np.array(zip(pdf, data))
+    # estimate y_hat corresponding to X
+    errors = list()
+    k = 10
+    for h in bandwidths:
+        error = 0
+        for i in range(k):
+            test, train = bundle_test_train_set(data, k, i)
+            estimator = kde_pdf(train, kernel_func=kernel_function, bandwidth=h)
+            y_hat = [estimator(x) for x in test[:, 1]]
+            error += (test[:, 0] - y_hat) ** 2
+        errors.append(sum(error))
 
+    errors = np.array(errors)
+    h_opt = bandwidths[np.argmin(errors)]
+    return h_opt
+
+
+def calculate_optimum_bandwidth(vals, kernel_function):
     # ========================================================
     # Bandwidth Selection : rule-of-thumb plugin             |
     # ========================================================
+    num_samples = len(vals)
+    h_opt = 0
     if "uniform_pdf" in str(kernel_function):
         sigma_hat = np.std(vals)
         R_k = 1 / 2
@@ -123,17 +167,33 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
         kappa_2 = 1
         h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
 
+    return h_opt
+
+
+# =========================================
+# kernel density estimates visualizations |
+# =========================================
+def plot_kde(true_dist, num_samples, kernel_function):
+    vals = np.array([])
+    if true_dist == 'exp':
+        vals = np.random.exponential(1, num_samples)
+    elif true_dist == 'norm':
+        vals = np.random.normal(0, 1, num_samples)
+
+    xvals = np.arange(min(vals), max(vals), .01)
+
+    h_opt = calculate_optimum_bandwidth(vals, kernel_function)
+
     # ========================================================
     # Bandwidth Selection : cross-validation                 |
     # ========================================================
-    grid = GridSearchCV(KernelDensity(), {'bandwidth': xvals}, cv=20)
-    grid.fit(vals[:, None])
-    h_cv = grid.best_params_["bandwidth"]
+    h_cv = estimate_bandwidth(xvals, gaussian_pdf, true_dist)
 
     # ========================================================
     # Optimized Bandwidth visualization                      |
     # ========================================================
     fig = plt.figure()
+    # plugin optimal bandwidth
     ax4 = fig.add_subplot(2, 2, 1)
     dist_4 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=h_opt)
     y4 = [dist_4(i) for i in xvals]
@@ -145,7 +205,7 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
         ax4.plot(xvals, norm.pdf(xvals, 0, 1))
     ax4.plot(xvals, y4)
 
-    # bandwidth=optimal_bandwidth_crossvalidated:
+    # bandwidth chosen from cross validation
     ax5 = fig.add_subplot(2, 2, 2)
     dist_5 = kde_pdf(vals, kernel_func=kernel_function, bandwidth=h_cv)
     y5 = [dist_5(i) for i in xvals]
@@ -158,8 +218,8 @@ def plot_kde(true_dist, num_samples, kernel_function, bandwidth_h):
     ax5.plot(xvals, y5)
 
     # display gridlines
-    g4 = ax4.grid(True)
-    g5 = ax5.grid(True)
+    ax4.grid(True)
+    ax5.grid(True)
 
     # display legend in each subplot
     leg4 = mpatches.Patch(color=None, label=f'plug-in bandwidth={h_opt}')

@@ -1,9 +1,9 @@
 # kernel_regress_estimator.py
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-from random import seed, randrange, uniform
+from random import uniform
+from kernel_density_estimator import gaussian_pdf, bundle_test_train_set, calculate_optimum_bandwidth
 
 plt.rcParams["figure.figsize"] = (15, 10)
 
@@ -37,46 +37,6 @@ def kernel_regression_estimator(data, kernel_func, bandwidth):
     return evaluate
 
 
-# ============================================
-# Gaussian Kernel PDF                        |
-# ============================================
-def gaussian_pdf(x_i, bandwidth):
-    """Return Gaussian kernel density estimator."""
-    x_bar = x_i
-
-    def evaluate(x):
-        """Evaluate x."""
-        pdf = (np.sqrt(2 * np.pi * bandwidth ** 2) ** -1) * np.exp(-((x - x_bar) ** 2) / (2 * bandwidth ** 2))
-        return pdf
-
-    return evaluate
-
-
-def cross_validation_split(dataset, folds=10):
-    dataset_split = list()
-    dataset_copy = list(dataset)
-    fold_size = int(len(dataset) / folds)
-    for i in range(folds):
-        fold = list()
-        while len(fold) < fold_size:
-            index = randrange(len(dataset_copy))
-            fold.append(dataset_copy.pop(index))
-        dataset_split.append(fold)
-    return dataset_split
-
-
-def bundle_test_train_set(dataset, k, test_idx):
-    folds = cross_validation_split(dataset, folds=k)
-    test = np.array(folds[test_idx])
-
-    train = list()
-    for i, x in enumerate(folds):
-        if i != test_idx:
-            train.extend(folds[i])
-    train = np.array(train)
-    return test, train
-
-
 def estimate_bandwidth(data, kernel_function):
     bandwidths = np.arange(0.01, 2, 0.02)
 
@@ -85,7 +45,6 @@ def estimate_bandwidth(data, kernel_function):
     k = 10
     for h in bandwidths:
         error = 0
-        folds = cross_validation_split(data, k)
         for i in range(k):
             test, train = bundle_test_train_set(data, k, i)
             estimator = kernel_regression_estimator(train, kernel_func=kernel_function, bandwidth=h)
@@ -102,34 +61,10 @@ def estimate_bandwidth(data, kernel_function):
 # kernel density estimates visualizations |
 # =========================================
 def plot_kre(data, kernel_function):
-    seed(2)
-
-    num_samples = len(data[:, 0])
     vals = data[:, 1]  # x
     xvals = np.arange(min(vals), max(vals), .01)
 
-    # ========================================================
-    # Bandwidth Selection : rule-of-thumb plugin             |
-    # ========================================================
-    # bandwidth estimation based on kernel function
-
-    if "uniform_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
-        R_k = 1 / 2
-        kappa_2 = 1 / 3
-        h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
-
-    elif "epanechnikov_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
-        R_k = 3 / 5
-        kappa_2 = 1 / 5
-        h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
-
-    elif "gaussian_pdf" in str(kernel_function):
-        sigma_hat = np.std(vals)
-        R_k = 1 / (2 * (np.pi ** 0.5))
-        kappa_2 = 1
-        h_opt = (((8 * (np.pi ** 0.5) * R_k) / (3 * kappa_2 * num_samples)) ** 0.2) * sigma_hat
+    h_opt = calculate_optimum_bandwidth(vals, kernel_function)
 
     # ========================================================
     # Bandwidth Selection : cross-validation                 |
@@ -140,15 +75,14 @@ def plot_kre(data, kernel_function):
     # Optimized Bandwidth visualization                      |
     # ========================================================
     fig = plt.figure()
-
-    # bandwidth=optimal_bandwidth_plugin:
+    # plugin optimal bandwidth
     ax4 = fig.add_subplot(2, 2, 1)
     dist_4 = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_opt)
     y4 = [dist_4(i) for i in xvals]
     ax4.scatter(data[:, 1], data[:, 0])
     ax4.plot(xvals, y4)
 
-    # bandwidth=optimal_bandwidth_crossvalidated:
+    # bandwidth chosen from cross validation
     ax5 = fig.add_subplot(2, 2, 2)
     dist_5 = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_cv)
     y5 = [dist_5(i) for i in xvals]
@@ -173,7 +107,7 @@ def plot_kre(data, kernel_function):
 # ===================================================
 # Generate data                                     |
 # ===================================================
-def generate_data(n):
+def generate_data_for_midterm(n):
     x = list()
     y = list()
 
@@ -204,8 +138,7 @@ def create_confidence_interval(num_simulation):
     for i in range(num_simulation):
         # generate data
         n = 200
-        data, _, _ = generate_data(n)
-        xi = data[:, 1]
+        data, _, _ = generate_data_for_midterm(n)
         x = np.arange(-2, 10, .1)
         # estimate bandwidth - calculate on the first dataset
         if i == 0:
@@ -216,3 +149,5 @@ def create_confidence_interval(num_simulation):
         y_hat = [estimator(i) for i in x]
 
         f_hat_list.append(y_hat)
+
+    return f_hat_list
