@@ -1,1 +1,1 @@
-# non-parametric-methods
+# Nonparametric methods
