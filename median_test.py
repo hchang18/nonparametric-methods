@@ -14,7 +14,7 @@ def wilcoxon_test(data):
 
     Parameters
     ----------
-    data : 2d array of floats
+    data : 1d array of floats
 
     Returns
     -------
