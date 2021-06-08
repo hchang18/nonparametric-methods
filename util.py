@@ -18,13 +18,16 @@ def read_data(filename):
     return data, x, y
 
 
-def plot_2darray(x, y):
+def plot_2darray(X, Y):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.scatter(x, y)
+    ax.set_title('Scatter Plot of X and Y')
+    ax.scatter(X, Y)
     ax.grid(True)
     leg = mpatches.Patch(color=None, label='original data plots')
     ax.legend(handles=[leg])
+    plt.xlabel('X')
+    plt.ylabel('Y')
     plt.tight_layout()
     plt.show()
 
