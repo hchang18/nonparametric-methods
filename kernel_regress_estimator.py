@@ -4,9 +4,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 from random import uniform
 from kernel_density_estimator import gaussian_pdf, bundle_test_train_set, calculate_optimum_bandwidth
-
-plt.rcParams["figure.figsize"] = (15, 10)
-
+import seaborn as sns
 
 def kernel_regression_estimator(data, kernel_func, bandwidth):
     """
@@ -77,7 +75,7 @@ def estimate_bandwidth(data, kernel_function):
     return h_opt
 
 
-def plot_kre(data, kernel_function):
+def plot_kre(data, kernel_function, bandwidth):
     """
     Visualize kernel regression estimates using both bandwidth
     obtained from plugin method and cross validation
@@ -85,36 +83,29 @@ def plot_kre(data, kernel_function):
     x_values = data[:, 1]
     x = np.arange(min(x_values), max(x_values), .01)
 
-    h_opt = calculate_optimum_bandwidth(x_values, kernel_function)
-    h_cv = estimate_bandwidth(data, gaussian_pdf)
+    if 'plugin' in bandwidth:
+        h = calculate_optimum_bandwidth(x_values, kernel_function)
+    elif 'crossval' in bandwidth:
+        h = estimate_bandwidth(data, gaussian_pdf)
 
     fig = plt.figure()
 
-    # plugin optimal bandwidth
-    ax = fig.add_subplot(2, 2, 1)
-    dist_h_opt = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_opt)
-    y_h_opt = [dist_h_opt(i) for i in x]
+    # draw graph
+    ax = fig.add_subplot(1, 1, 1)
+    sns.set(color_codes=True)
+    plt.rcParams["figure.figsize"] = (10, 7.5)
+    plt.rcParams["axes.titlesize"] = 20
+    ax.set_title('Kernel Regression Estimator')
+    dist = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h)
+    y = [dist(i) for i in x]
     ax.scatter(data[:, 1], data[:, 0])
-    ax.plot(x, y_h_opt)
-
-    # bandwidth chosen from cross validation
-    ax1 = fig.add_subplot(2, 2, 2)
-    dist_h_cv = kernel_regression_estimator(data, kernel_func=kernel_function, bandwidth=h_cv)
-    y_h_cv = [dist_h_cv(i) for i in x]
-    ax1.scatter(data[:, 1], data[:, 0])
-    ax1.plot(x, y_h_cv)
-
-    # display gridlines
+    ax.plot(x, y, color='orange')
     ax.grid(True)
-    ax1.grid(True)
-
-    # display legend in each subplot
-    leg4 = mpatches.Patch(color=None, label=f'plug-in bandwidth={h_opt}')
-    leg5 = mpatches.Patch(color=None, label=f'cross-validated bandwidth={h_cv}')
-
-    ax.legend(handles=[leg4])
-    ax1.legend(handles=[leg5])
-
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    h_round = round(h, 2)
+    leg = mpatches.Patch(color=None, label=f'bandwidth={h_round}')
+    ax.legend(handles=[leg])
     plt.tight_layout()
     plt.show()
 
@@ -165,7 +156,7 @@ def create_confidence_interval(num_simulation):
             h_cv = estimate_bandwidth(data, gaussian_pdf)
             print(h_cv)
         # estimate f_hat
-        estimator = kernel_regression_estimator(data, gaussian_pdf, bandwidth=h_cv)
+        estimator = kernel_regression_estimator(data, gaussian_pdf, "crossvalidation")
         y_hat = [estimator(i) for i in x]
 
         f_hat_list.append(y_hat)
