@@ -1,3 +1,6 @@
+import matplotlib.patches as mpatches
+import seaborn as sns
+import matplotlib
 from kernel_density_estimator import plot_kde, gaussian_pdf
 from util import *
 from kernel_regress_estimator import *
@@ -7,74 +10,78 @@ from exchangeability_test import *
 from dispersion_test import *
 from independence_test import *
 
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # kernel density estimation
-    # plot_kde(true_dist='norm', num_samples=100, kernel_function=gaussian_pdf, bandwidth_h=[0.1, 0.4, 1])
 
-    # kernel regression estimation
-    # data, x, y = read_data("data1.txt")
-    # plot_2darray(x, y)
-    # plot_kre(data, gaussian_pdf)
+    # import dataset
+    data, X, Y = read_data("data2.txt")
 
-    # nonparametric testing
+    # provide fundamental summaries of two samples
 
-    # wilcoxon_test
-    n = 30
-    data = []
-    for i in range(n):
-        data.append(np.random.normal(0.5, 1))
-    w, p_value = wilcoxon_test(data)
+    sns.set(color_codes=True)
+    plt.rcParams["figure.figsize"] = (10, 7.5)
+    plt.rcParams["axes.titlesize"] = 20
 
-    # mann_whitney_u_test
-    # Generate X from N(0.2, 1) and Y from N(0.5, 1)
-    # m = 300  # number of Xs
-    # n = 400  # number of Ys
-    # X = np.random.normal(0.2, 1, size=m)
-    # Y = np.random.normal(0.5, 1, size=n)
-    # mann_whitney_u_test(X, Y)
+    # Histogram of X
+    fig, ax = plt.subplots()
+    ax.hist(X)
+    ax.grid(True)
+    ax.set_title('Histogram of X')
+    fig.show()
 
-    # fligner_policello test
-    # Generate X from N(0.2, 0.5) and Y from N(0.5, 1)
-    # m = 300  # number of Xs
-    # n = 400  # number of Ys
-    # X = np.random.normal(0.2, 0.5, size=m)
-    # Y = np.random.normal(0.5, 1, size=n)
-    # fligner_policello_test(X, Y)
+    # Histogram of Y
+    fig, ax = plt.subplots()
+    ax.hist(Y)
+    ax.grid(True)
+    ax.set_title('Histogram of Y')
+    fig.show()
 
-    # test symmetry
-    # data, X, Y = read_data("data2.txt")
-    # fig, (ax1, ax2) = plt.subplots(1, 2)
-    # ax1.hist(X)
-    # ax1.set_title("X")
-    # ax2.hist(Y)
-    # ax2.set_title("Y")
-    # fig.show()
-    # z, pvalue = symmetry_test(X)
-    # z1, pvalue1 = symmetry_test(Y)
-    # print(z, pvalue)
-    # print(z1, pvalue1)
+    # test of symmetry - X
+    X_v, X_pvalue = symmetry_test(X)
+    print(f"Symmetry test (X): p-value is {X_pvalue}")
 
-    # test exchangeability
-    # n = 20  # samples or trials
-    # p_x = 0.4
-    # p_y = 0.5
-    # size = 15  # number of experiments
-    # x = np.random.binomial(n, p_x, size)
-    # y = np.random.binomial(n, p_y, size)
-    # exchangeability_test(x, y, size)
+    Y_v, Y_pvalue = symmetry_test(Y)
+    print(f"Symmetry test (Y): p-value is {Y_pvalue}")
 
-    # test whether variances are the same
-    # data, X, Y = read_data("data2.txt")
-    # Q, p_value = variance_test_one(X, Y)
-    # if Q > 1.95 or Q < - 1.95:
-    #     print("Reject H0 (variances of two distributions are the same)")
-    # else:
-    #     print("Cannot reject H0 (variances of two distributions are the same)")
-    # variance_test_two(X, Y)
+    diff, diff_pvalue = symmetry_test(X-Y)
+    print(f"symmetry test (X-Y): p-value is {diff_pvalue}")
 
+    # test if the median of X and Y are the same
+    # mann whitney
+    m, m_pvalue = mann_whitney_u_test(X, Y)
+    print(f"Mann Whitney U test: p-value is {m_pvalue}")
+    # fligner-policello
+    fp, fp_pvalue = fligner_policello_test(X, Y)
+    print(f"fligner-policello test: p-value is {fp_pvalue}")
 
-    # test independence
-    # data, X, Y = read_data("data2.txt")
-    # independence_test(data)
+    # test if the variance of X and Y are the same
+    c, q1_pvalue = variance_test_one(X, Y)
+    print(f"variance test one: Q is {c} and p-value is {q1_pvalue}")
+    q, q2_pvalue = variance_test_two(X, Y)
+    print(f"variance test two: Q is {q} and p-value is {q2_pvalue}")
+
+    # test the independence between X and Y
+    z_ind, p_val_ind, tau = independence_test(data)
+    print(f"Independence test: z score is {z_ind}, p-value is {p_val_ind}, and tau is {tau}")
+
+    # since we know that they are dependent
+    # let's find out the relationship
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_title('Scatter Plot of X and Y')
+    ax.scatter(X, Y)
+    ax.grid(True)
+    leg = mpatches.Patch(color=None, label='original data plots')
+    ax.legend(handles=[leg])
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.tight_layout()
+    plt.show()
+
+    # plot the relationship between two samples
+    # using the kernel regression estimator
+    bandwidth = 'crossval'
+    plot_kre(data, gaussian_pdf, bandwidth)
+
 
