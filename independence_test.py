@@ -21,9 +21,16 @@ def independence_test(data):
     """
 
     n = len(data)
-    sorted_data = sorted(data, key=lambda x: x[1])
+
+
+    # sort the array with X
+    def Sort_Tuple(tup):
+        return sorted(tup, key=lambda x: x[1])
+
+    sorted_data = np.array(Sort_Tuple(data))
     X = sorted_data[:, 1]
     Y = sorted_data[:, 0]
+
 
     concordant = 0
     discordant = 0
