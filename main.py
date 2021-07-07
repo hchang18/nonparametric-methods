@@ -1,12 +1,8 @@
-import matplotlib.patches as mpatches
 import seaborn as sns
-import matplotlib
-from kernel_density_estimator import plot_kde, gaussian_pdf
 from util import *
 from kernel_regress_estimator import *
 from median_test import *
 from symmetry_test import *
-from exchangeability_test import *
 from dispersion_test import *
 from independence_test import *
 
@@ -18,7 +14,6 @@ if __name__ == '__main__':
     data, X, Y = read_data("data2.txt")
 
     # provide fundamental summaries of two samples
-
     sns.set(color_codes=True)
     plt.rcParams["figure.figsize"] = (10, 7.5)
     plt.rcParams["axes.titlesize"] = 20
