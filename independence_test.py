@@ -18,6 +18,7 @@ def independence_test(data):
     statistic : float
     p_value : float
         THe p-value for the two-sided test
+    tau : float
     """
 
     n = len(data)
