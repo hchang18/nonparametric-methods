@@ -70,13 +70,11 @@ leg = mpatches.Patch(label='original data plots')
 ax.legend(handles=[leg])
 plt.xlabel('X')
 plt.ylabel('Y')
-plt.tight_layout()
-plt.show()
-
 # plot the relationship between two samples
 # using the kernel regression estimator
 bandwidth = 'crossval'
 plot_kre(data, gaussian_pdf, bandwidth)
+plt.show()
 ```
 
 Refer to `main.py` for complete demo. 
