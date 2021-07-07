@@ -39,20 +39,24 @@ from dispersion_test import *
 from independence_test import *
 
 # test of symmetry of distribution of data X
-X_v, X_pvalue = symmetry_test(X)
+# returns test statistic and p-value
+symmetry_test(X)
 
 # test if the median of X and Y are the same
+# both tests return test statistic and p-value
 # mann whitney test
-m, m_pvalue = mann_whitney_u_test(X, Y)
+mann_whitney_u_test(X, Y)
 # fligner-policello test
-fp, fp_pvalue = fligner_policello_test(X, Y)
+fligner_policello_test(X, Y)
 
 # test if the variance of X and Y are the same
-c, q1_pvalue = variance_test_one(X, Y)
-q, q2_pvalue = variance_test_two(X, Y)
+# returns test statistic and p-value
+variance_test_one(X, Y)
+variance_test_two(X, Y)
 
 # test the independence between X and Y
-z_ind, p_val_ind, tau = independence_test(data)
+# returns test statistic, p-value, kendall's tau
+independence_test(data)
 
 # when two datasets are dependent, 
 # we can find out the relationship between X and Y
